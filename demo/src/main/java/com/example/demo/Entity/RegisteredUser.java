@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-@Entity
+@Follow
 @Table(name = "users")
 public class RegisteredUser implements IUser{
     @Id
@@ -34,6 +34,8 @@ public class RegisteredUser implements IUser{
     @OneToMany(mappedBy = "receiver")
     @JsonIgnore
     private List<Question> questionsReceived;
+
+
 
 
 

@@ -16,8 +16,8 @@ public class UserService {
     private UserRepo userRepo;
 
 
-    public RegisteredUser findById(Long id){
-        return userRepo.findById(id).orElseThrow();
+    public Optional<RegisteredUser> findById(Long id){
+        return userRepo.findById(id);
     }
 
     public RegisteredUser insert(RegisteredUser user){
