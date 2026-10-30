@@ -3,14 +3,20 @@ package com.example.demo.Service;
 
 import com.example.demo.Entity.Follow;
 import com.example.demo.Entity.RegisteredUser;
+import com.example.demo.Projection.FollowerListProjection;
 import com.example.demo.Repository.FollowRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
 @Service
 public class FollowService {
     @Autowired
@@ -22,6 +28,15 @@ public class FollowService {
     /**
      * Follow another user.
      */
+    @Transactional
+    public void follow(Long followerId, String followingUsername) {
+        RegisteredUser following = userService.findByUsername(followingUsername).
+                orElseThrow (()->new EntityNotFoundException("No user with this username was found"));
+        Long followingId = following.getUserId();
+        follow(followerId,followingId);
+
+    }
+
     @Transactional
     public void follow(Long followerId, Long followingId) {
         if (followerId.equals(followingId)) {
@@ -43,6 +58,14 @@ public class FollowService {
         follow.setFollowing(following);
 
         followRepository.save(follow);
+    }
+    @Transactional
+    public void unfollow(Long followerId, String followingUsername) {
+        RegisteredUser following = userService.findByUsername(followingUsername).
+                orElseThrow (()->new EntityNotFoundException("No user with this username was found"));
+        Long followingId = following.getUserId();
+        unfollow(followerId,followingId);
+
     }
 
     @Transactional
@@ -92,21 +115,37 @@ public class FollowService {
     /**
      * Paginated followers list.
      */
-//    public Page<Follow> getFollowers(Long userId, Pageable pageable) {
-//        RegisteredUser user = userService.findById(userId)
-//                .orElseThrow(() -> new EntityNotFoundException("User not found."));
-//
-//        return followRepository.findByFollowing(user, pageable);
-//    }
+    public List<Follow> findAll(){
+        return followRepository.findAll();
+    }
+    public List<RegisteredUser> getFollowers(Long userId,Pageable pageable){
+        List<Follow> followers = followRepository.findByFollowingUserId(userId,pageable).getContent();
+        List<RegisteredUser> followersList = new ArrayList<>();
+        int n = followers.size();
+        for(int i=0;i<n;i++)
+            followersList.add(followers.get(i).getFollower());
+        return followersList;
+    }
+    public List<RegisteredUser> getFollowing(Long userId,Pageable pageable){
+        List<Follow> following = followRepository.findByFollowerUserId(userId,pageable).getContent();
+        List<RegisteredUser> followingList = new ArrayList<>();
+        int n = following.size();
+        for(int i=0;i<n;i++)
+            followingList.add(following.get(i).getFollowing());
+        return followingList;
+    }
 
     /**
      * Paginated following list.
      */
-    public Page<Follow> getFollowing(Long userId, Pageable pageable) {
-        RegisteredUser user = userService.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found."));
-
-        return followRepository.findByFollower(user, pageable);
-    }
+//    public List<RegisteredUser> getFollowing(String username) {
+//        RegisteredUser user = userService.findByUsernameWithError(username);
+//        return followRepository.findByFollower(user);
+//    }
+//    public List<RegisteredUser> getFollowing(Long userId) {
+//        RegisteredUser user = userService.findByIdWithError(userId);
+//
+//        return followRepository.findByFollower(user);
+//    }
 
 }

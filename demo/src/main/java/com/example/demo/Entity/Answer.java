@@ -10,12 +10,13 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 
-@Follow
+
 @Table(name = "answers")
 @Getter
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Answer implements IAnswer{
 
     @Id

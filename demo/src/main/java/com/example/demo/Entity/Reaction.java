@@ -3,7 +3,7 @@ package com.example.demo.Entity;
 import jakarta.persistence.*;
 
 
-@Follow
+@Entity
 @Table(name = "reactions")
 public class Reaction implements IReaction{
 

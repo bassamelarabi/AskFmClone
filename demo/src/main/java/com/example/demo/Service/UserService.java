@@ -1,9 +1,13 @@
 package com.example.demo.Service;
 
+import com.example.demo.DTO.UserDTO;
 import com.example.demo.Entity.Question;
 import com.example.demo.Entity.RegisteredUser;
 import com.example.demo.Repository.UserRepo;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +20,37 @@ public class UserService {
     private UserRepo userRepo;
 
 
+
+
+    public RegisteredUser findByIdWithError(Long id){
+        return userRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found."));
+    }
     public Optional<RegisteredUser> findById(Long id){
         return userRepo.findById(id);
+    }
+    public RegisteredUser findByUsernameWithError(String username){
+        return userRepo.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found."));
+    }
+    public Optional<RegisteredUser> findByUsername(String username){
+        return userRepo.findByUsername(username);
+    }
+    public List<RegisteredUser> findByUsernameLike(String username){
+        return userRepo.findByUsernameLike(username);
+    }
+
+    public RegisteredUser insert(UserDTO user){
+        RegisteredUser user_ = new RegisteredUser();
+        if(user.getBio()!=null)
+            user_.setBio(user.getBio());
+        if(user.getPassword()!=null)
+            user_.setPassword(user.getPassword());
+        if(user.getUsername()!=null)
+            user_.setUsername(user.getUsername());
+        if(user.getProfilePicLocation()!=null)
+            user_.setProfilePicLocation(user.getProfilePicLocation());
+        if(user.getAllowAnonymousQuestions()!=null)
+            user_.setAllowAnonymousQuestions(user.getAllowAnonymousQuestions());
+        return insert(user_);
     }
 
     public RegisteredUser insert(RegisteredUser user){
@@ -44,11 +77,27 @@ public class UserService {
     public void deleteById(Long id){
         userRepo.deleteById(id);
     }
-    public List<RegisteredUser> findAll(){
-        return userRepo.findAll();
+    public List<RegisteredUser> findAll(Pageable pageable){
+        return userRepo.findAll(pageable).getContent();
     }
     public int deleteByUsername(String username){
-        return userRepo.deleteByusername(username);
+        return userRepo.deleteByUsername(username);
+    }
+
+    public void follow(RegisteredUser user){
+    }
+//    public List<RegisteredUser> filter (String name){
+//        if(name.isBlank()){
+//            name = null;
+//        }
+//        return userRepo.filter(name);
+//
+//    }
+
+
+
+    public boolean existsById(Long userId){
+        return userRepo.existsById(userId);
     }
   /*  public List<Question> findReceivedQuestions(Long userId){
         return questionService.findReceivedQuestions(userId);

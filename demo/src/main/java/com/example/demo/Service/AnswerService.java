@@ -3,7 +3,6 @@ package com.example.demo.Service;
 import com.example.demo.Entity.Answer;
 import com.example.demo.Repository.AnswerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ public class AnswerService {
 
 
 
-    public Answer insert(String answerContent, Long questionId){
+    public Answer answerQuestion(String answerContent, Long questionId){
         Answer ans = new Answer();
         ans.setContent(answerContent);
         ans.setQuestion(questionService.findById(questionId));

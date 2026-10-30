@@ -38,6 +38,13 @@ public class Follow {
 
 
 
+    public Long getFollowingId(){
+        return following.getUserId();
+    }
+    public Long getFollowerId(){
+        return follower.getUserId();
+    }
+
     // getters and setters
 }
 

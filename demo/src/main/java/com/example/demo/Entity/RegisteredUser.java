@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
 
@@ -14,17 +15,18 @@ import java.util.List;
 @RequiredArgsConstructor
 @AllArgsConstructor
 
-@Follow
+@Entity(name = "users")
 @Table(name = "users")
 public class RegisteredUser implements IUser{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long userId;
     String bio;
+    @NotNull
     String username;
     String password;
     String profilePicLocation;
-    boolean allowAnonymousQuestions;
+    boolean allowAnonymousQuestions = true;
 
 
     @OneToMany(mappedBy = "sender")

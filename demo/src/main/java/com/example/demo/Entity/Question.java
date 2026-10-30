@@ -1,10 +1,7 @@
 package com.example.demo.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 import java.time.LocalDate;
@@ -14,7 +11,7 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Follow
+@Entity
 @Table(name = "questions")
 public class Question implements IQuestion{
 
@@ -24,6 +21,9 @@ public class Question implements IQuestion{
     private String content;
     private LocalDate publishedDate;
 
+    @Setter(AccessLevel.NONE) // prevents the external user of this class from accidental modifying the question state without adding/removing answers
+    private Boolean isAnswered = false; //this indicates if a question is answered or not yet
+
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private RegisteredUser sender;
@@ -32,12 +32,20 @@ public class Question implements IQuestion{
     @JoinColumn(name = "receiver_id")
     private RegisteredUser receiver;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
     private List<Answer> answers;
 
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
     private List<Reaction> reactions;
+
+    public void changeStateAnswered(){
+        this.isAnswered = true;
+    }
+    public void resetState(){
+        this.isAnswered = false;
+    }
+
 
 
 
